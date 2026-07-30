@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AccuGPS · Administration Walkthrough</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#F5A623;--orange-deep:#E8911C;--orange-soft:#FDEFD0;
+    --red:#C4262E;--red-deep:#9E1B22;--red-soft:#F7DDDF;
+    --forest:#2E443C;--forest-deep:#122023;--forest-soft:#E6ECE7;--lime:#E6FF83;
+    --cream:#FAF5E8;--cream-deep:#F0E8D3;
+    --ink:#1A1817;--ink-80:#2A2622;--ink-60:#4A4540;--ink-40:#807a72;--ink-20:#d4cec3;
+    --paper:#ffffff;--rule:#ece5d4;--rule-strong:#d4cec3;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+    --display:'Fraunces',Georgia,serif;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;background:var(--paper);-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:var(--display);font-weight:600;letter-spacing:-0.4px;line-height:1.12;margin:0}
+  p{text-wrap:pretty;margin:0}
+  a{color:var(--orange-deep);text-decoration:none}
+  a:hover{color:var(--red)}
+  .eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.32em;color:var(--orange-deep)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 40px}
+
+  .bar{position:sticky;top:0;z-index:50;background:rgba(18,32,35,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1)}
+  .bar .wrap{display:flex;align-items:center;gap:14px;height:60px}
+  .bar img{height:22px}
+  .bar .bt{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#cdd8d0}
+  .bar nav{margin-left:auto;display:flex;gap:24px}
+  .bar nav a{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#9fb0a7}
+  .bar nav a:hover{color:var(--lime)}
+
+  .hero{background:var(--forest-deep);color:var(--cream);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-16%;top:-40%;width:60vw;height:60vw;border-radius:50%;background:radial-gradient(circle,rgba(230,255,131,.09),transparent 62%)}
+  .hero .wrap{padding-top:76px;padding-bottom:76px;position:relative;z-index:1}
+  .hero .lbl{font-family:var(--mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--orange);margin-bottom:22px}
+  .hero h1{font-size:68px;line-height:1.0;font-weight:500;color:var(--cream)}
+  .hero h1 em{font-style:italic;color:var(--lime);font-weight:500}
+  .hero .sub{font-family:var(--display);font-size:21px;line-height:1.5;color:#cdd8d0;max-width:54ch;margin-top:26px}
+  .hero .meta{display:flex;gap:44px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.18);margin-top:44px;padding-top:24px}
+  .hero .meta .k{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--lime);margin-bottom:6px}
+  .hero .meta .v{font-size:15px;color:var(--cream)}
+
+  section{padding:82px 0;border-bottom:1px solid var(--rule)}
+  .sec-head{margin-bottom:30px;max-width:72ch}
+  .sec-head .eyebrow{display:block;margin-bottom:14px}
+  .sec-head h2{font-size:42px}
+  .lead{font-size:19px;line-height:1.5;color:var(--ink-60);max-width:68ch;margin-top:16px}
+  .lead b{color:var(--ink)}
+  section > .wrap > p{font-size:16px;color:var(--ink-80);margin-top:12px;max-width:72ch}
+
+  .vid{margin:24px 0;border-radius:12px;overflow:hidden;border:1px solid var(--rule-strong);background:#0c1517;position:relative;box-shadow:0 18px 40px -24px rgba(18,32,35,.55)}
+  .vid video{width:100%;display:block;aspect-ratio:1918/988;background:#0c1517}
+  .vid .cap{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--forest);color:#e4ece6;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .vid .cap b{color:#fff;font-weight:600}
+  .vid .cap .fig{color:var(--lime)}
+  .vid .cap .live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:#cdd8d0;text-transform:none;letter-spacing:.04em}
+  .vid .cap .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 0 rgba(245,166,35,.6);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,166,35,.55)}70%{box-shadow:0 0 0 7px rgba(245,166,35,0)}100%{box-shadow:0 0 0 0 rgba(245,166,35,0)}}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}.hero h1{font-size:46px}.sec-head h2{font-size:32px}.wrap{padding:0 24px}}
+
+  .rpt{border-top:2px solid var(--forest);padding-top:26px;margin-top:40px}
+  .rpt:first-of-type{margin-top:28px}
+  .rpt-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .rpt-head .rn{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--orange-deep);letter-spacing:.1em}
+  .rpt-head h3{margin:0;font-size:27px;font-family:var(--display);font-weight:600}
+  .rpt-head .shape{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--forest);background:var(--forest-soft);padding:4px 11px;border-radius:999px}
+  .rpt > p{font-size:16px;color:var(--ink-80);margin-top:12px;max-width:74ch}
+
+  ul.wid{list-style:none;padding:0;margin:16px 0;max-width:76ch}
+  ul.wid li{position:relative;padding:10px 0 10px 26px;border-bottom:1px solid var(--rule);font-size:15.5px}
+  ul.wid li::before{content:"";position:absolute;left:0;top:18px;width:9px;height:9px;background:var(--orange);border-radius:2px;transform:rotate(45deg)}
+  ul.wid li b{font-weight:600}
+
+  .triad{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule-strong);border-radius:10px;overflow:hidden;margin:22px 0}
+  .triad>div{padding:18px 20px;border-right:1px solid var(--rule-strong)}
+  .triad>div:last-child{border-right:0}
+  .triad .k{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--orange-deep);margin-bottom:8px}
+  .triad h4{font-family:var(--display);font-size:18px;margin-bottom:6px}
+  .triad p{font-size:13.5px;color:var(--ink-60);line-height:1.5}
+  @media(max-width:820px){.triad{grid-template-columns:1fr}.triad>div{border-right:0;border-bottom:1px solid var(--rule-strong)}}
+
+  ol.steps{counter-reset:step;list-style:none;padding:0;margin:20px 0;max-width:74ch}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 46px;font-size:16px}
+  ol.steps>li::before{content:counter(step);position:absolute;left:0;top:-2px;width:30px;height:30px;background:var(--forest);color:#fff;border-radius:50%;font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center}
+  ol.steps>li b{font-weight:600}
+
+  .callout{border-left:4px solid var(--orange);background:var(--orange-soft);padding:16px 20px;border-radius:0 8px 8px 0;margin:22px 0;font-size:15.5px;max-width:80ch}
+  .callout.warn{border-color:var(--red);background:var(--red-soft)}
+  .callout .co-k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.18em;font-weight:700;display:block;margin-bottom:5px;color:var(--ink-60)}
+
+  .ways{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}
+  .way{border:1px solid var(--rule-strong);border-radius:10px;padding:20px 22px;background:var(--cream)}
+  .way .wn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--orange-deep);display:flex;align-items:center;gap:10px;margin-bottom:11px}
+  .way .wn span{width:24px;height:24px;background:var(--forest);color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+  .way h4{font-family:var(--display);font-size:19px;margin-bottom:6px}
+  .way p{font-size:14px;color:var(--ink-60);line-height:1.5}
+  .way p b{color:var(--ink);font-weight:600}
+  @media(max-width:820px){.ways{grid-template-columns:1fr}}
+
+  table.ref{width:100%;border-collapse:collapse;margin:22px 0;font-size:14.5px}
+  table.ref thead th{background:var(--forest);color:var(--cream);text-align:left;padding:11px 14px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:600}
+  table.ref tbody td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+  table.ref tbody tr:nth-child(even){background:var(--cream)}
+  table.ref tbody td:first-child{font-weight:600;white-space:nowrap}
+  table.ref .cat{font-family:var(--mono);font-size:10px;color:var(--ink-40);text-transform:uppercase;letter-spacing:.06em;display:block;margin-top:2px}
+
+  .roi{display:flex;gap:20px;background:var(--forest);color:var(--cream);border-radius:10px;padding:20px 24px;margin:28px 0}
+  .roi .roi-k{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.24em;color:var(--lime);white-space:nowrap;padding-top:3px}
+  .roi p{font-size:16px;line-height:1.55;color:#e4ece6}
+  .roi p b{color:#fff}
+
+  footer{background:var(--forest-deep);color:#9fb0a7;padding:46px 0}
+  footer .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  footer img{height:20px}
+  footer .fr{margin-left:auto;color:#cdd8d0}
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#122023"/><g transform="translate(50 42)" fill="none" stroke="#E6FF83" stroke-width="3.5"><circle r="13"/><path d="M0 -20 v6 M0 14 v6 M-20 0 h6 M14 0 h6" stroke="#F5A623"/></g><circle cx="50" cy="42" r="4.5" fill="#F5A623"/><text x="50" y="84" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#FAF5E8" text-anchor="middle">ADMIN</text></svg></template>
+
+<div class="bar">
+  <div class="wrap">
+    <img src="accugps-logo.png" alt="AccuGPS" />
+    <span class="bt">Administration Walkthrough</span>
+    <nav>
+      <a href="#fleet">Fleet</a>
+      <a href="#settings">Settings</a>
+    </nav>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="lbl">Administration Suite · Interactive Walkthrough</p>
+    <h1>Set it up.<br>Lock it down.<br><em>Run it right.</em></h1>
+    <p class="sub">A guided tour of the control room behind AccuGPS. Two menus hold it all: the <b>Fleet</b> menu, where you group vehicles, score drivers, and create logins, and the <b>Settings</b> menu, where you configure the account, draw the places that matter, tune alerts, schedule reports, and grant outside access. Every task is shown on real platform video below.</p>
+    <div class="meta">
+      <div><div class="k">Covers</div><div class="v">Fleet menu · Settings menu</div></div>
+      <div><div class="k">Format</div><div class="v">Interactive video walkthrough</div></div>
+      <div><div class="k">Updated</div><div class="v">July 2026</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">00 · The Admin Layer</span>
+      <h2>Where administration lives</h2>
+      <p class="lead">Everything else in AccuGPS runs on decisions made here. The admin layer spans two menus in the top navigation: the <b>Fleet</b> menu for how vehicles and people are organized, and the <b>Settings</b> menu for how the account, places, alerts, and access are configured.</p>
+    </div>
+    <div class="ways">
+      <div class="way"><div class="wn"><span>F</span>Fleet menu</div><h4>Organize vehicles &amp; people</h4><p>Group trackers into named <b>Fleets</b>, score driver behavior, and create the <b>logins</b> your team signs in with.</p></div>
+      <div class="way"><div class="wn"><span>S</span>Settings menu</div><h4>Configure the platform</h4><p>Account preferences, per-device setup, geo-fences and POIs, notification rules, scheduled reports, and shared access.</p></div>
+    </div>
+    <table class="ref">
+      <thead><tr><th>Menu</th><th>Task</th><th>Covered in</th></tr></thead>
+      <tbody>
+        <tr><td>Fleet <span class="cat">Organize</span></td><td>Fleet Setting, Driver Score, User Manager.</td><td>Part 1</td></tr>
+        <tr><td>Settings <span class="cat">Configure</span></td><td>Account &amp; Tracker, Reporting &amp; Notifications, Geo-fence, POI, Report Tasks, Shared Account.</td><td>Part 2</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PART 1 · FLEET -->
+<section id="fleet">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">01 · The Fleet menu</span>
+      <h2>Fleet Setup, Scoring &amp; Users</h2>
+      <p class="lead">The Fleet menu is about <b>organization</b>: bundle vehicles into fleets that match how you actually operate, measure how each driver is performing, and hand out the logins that let your team in, each scoped to only the vehicles they should see.</p>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">1.1</span><h3>Fleet Setting</h3><span class="shape">Groups</span></div>
+      <p>A <b>Fleet</b> is a named group of trackers. Instead of one long vehicle list, you carve the operation into the groups you think in, such as a region, a division, or a service line, and every map view and report can then filter to that fleet.</p>
+      <div class="vid" data-vid><video src="Fleet%20Setting.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">01</span><b>Fleet Setting</b> · name a fleet and assign its trackers<span class="live">Live setup</span></div></div>
+      <ol class="steps">
+        <li>Open <b>Fleet › Setting</b> and give the fleet a clear <b>Name</b>.</li>
+        <li>In the <b>Tracker</b> list, tick the vehicles that belong to it, or <b>All Trackers</b> for a catch-all.</li>
+        <li>Press <b>Save</b>. The fleet is now a filter you can reuse across the map and reports.</li>
+      </ol>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">1.2</span><h3>Driver Score</h3><span class="shape">Scorecard</span></div>
+      <p>Driver Score turns raw driving events into a <b>ranked scorecard</b>. Over a chosen period, it grades behavior so you can coach objectively rather than by anecdote, and see at a glance who is driving safely and who needs a conversation.</p>
+      <div class="vid" data-vid><video src="Driver_Score.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">02</span><b>Driver Score</b> · pick a period and score driving behavior</div></div>
+      <ul class="wid">
+        <li><b>Set the window.</b> Choose the <b>Time</b> range and the trackers or drivers to include, then search to build the scorecard.</li>
+        <li><b>Behavior-based.</b> Scores draw on the same harsh-driving and safety events the OBD and AI alerts raise, so the ranking reflects real road behavior.</li>
+        <li><b>Coach with evidence.</b> A consistent number per driver makes recognition and correction fair, repeatable, and defensible.</li>
+      </ul>
+      <div class="callout"><span class="co-k">Fed by your alerts</span>The events that move a Driver Score, harsh acceleration, hard braking, speeding, and the camera's AI flags, are the ones you switch on under <b>Settings › Notifications</b> in Part 2. Tune those first and the score gets sharper.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">1.3</span><h3>User Manager</h3><span class="shape">Logins</span></div>
+      <p>User Manager creates the <b>logins</b> that access the platform and decides exactly what each one can see. It has two tabs: <b>Groups</b> for login accounts, and <b>Drivers</b> for the people roster.</p>
+      <div class="vid" data-vid><video src="User-Manager.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">03</span><b>User Manager</b> · a new login scoped to selected trackers</div></div>
+      <ol class="steps">
+        <li>On the <b>Groups</b> tab, enter the <b>Email</b>, <b>Password</b>, and a <b>Group</b> name for the login.</li>
+        <li>In the <b>Tracker</b> list, tick <b>All Trackers</b> or exactly the vehicles this login should see.</li>
+        <li>Press <b>Save</b>. The user signs in and sees only their assigned trackers.</li>
+      </ol>
+      <div class="ways">
+        <div class="way"><div class="wn"><span>G</span>Groups tab</div><h4>Login accounts</h4><p>Create and scope the sign-in accounts your dispatchers, managers, and crew leads use.</p></div>
+        <div class="way"><div class="wn"><span>D</span>Drivers tab</div><h4>People, not logins</h4><p>Maintain the driver roster so trips, work hours, and safety events attach to a named person.</p></div>
+      </div>
+    </div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Organized fleets, an objective driver scorecard, and tightly scoped logins mean the platform mirrors how you actually run. <b>Everyone sees the vehicles they own, and driver coaching rests on numbers, not hunches.</b></p></div>
+  </div>
+</section>
+
+<!-- PART 2 · SETTINGS -->
+<section id="settings">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">02 · The Settings menu</span>
+      <h2>Account, Places, Alerts &amp; Access</h2>
+      <p class="lead">The Settings menu is the full configuration surface. Each panel loads into the workspace beside the Live Map. We walk them in the order you would set up a new account: <b>configure</b> the account and devices, <b>map</b> the places that matter, <b>automate</b> alerts and reports, then <b>govern</b> outside access.</p>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.1</span><h3>Account &amp; Tracker Management</h3><span class="shape">Config</span></div>
+      <p>Start with the settings that shape how <b>everything</b> reads. Under <b>Settings › Account</b>, the basic account settings decide platform-wide display; under <b>Settings › Tracker</b>, you name and dress each device so it is recognizable everywhere.</p>
+      <div class="vid" data-vid><video src="Account%20and%20Tracker-Management.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">04</span><b>Account &amp; Tracker</b> · account preferences and per-device setup</div></div>
+      <ul class="wid">
+        <li><b>Units &amp; formats.</b> US or Metric, 12 or 24-hour clock, and date ordering, feeding every distance, speed, and timestamp.</li>
+        <li><b>Speed thresholds.</b> Account-wide <b>Slow Speed</b> and <b>Speed Violation</b> values that drive the speed flags in reports.</li>
+        <li><b>Time Zone &amp; alert recipients.</b> Anchor every timestamp, and add up to five accounts that receive alerts.</li>
+        <li><b>Per-device identity.</b> Tracker <b>Name</b>, <b>Vehicle</b>, <b>Class</b>, and a <b>map icon</b>, plus Power Saving and Out of Service states.</li>
+      </ul>
+      <div class="callout"><span class="co-k">Set these first</span>Account preferences ripple into every report, alert, and map label. Getting units, time zone, and thresholds right on day one saves re-reading every screen later.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.2</span><h3>Reporting &amp; Notifications</h3><span class="shape">Rules</span></div>
+      <p>Two panels that decide what the numbers mean and what earns your attention. <b>Settings › Reporting</b> sets each vehicle's fuel economy so fuel figures are accurate; <b>Settings › Notifications</b> chooses which events raise an alert and how it reaches you.</p>
+      <div class="vid" data-vid><video src="Reporting%20and%20Notification.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">05</span><b>Reporting &amp; Notifications</b> · fuel economy and alert rules</div></div>
+      <div class="triad">
+        <div><div class="k">CITY / HWY</div><h4>Fuel economy</h4><p>Per-unit city and highway MPG so the Fuel and Summary reports compute gallons correctly.</p></div>
+        <div><div class="k">EVENTS</div><h4>Alert rules</h4><p>Toggle each event per tracker, from movement and speeding to the camera's AI safety alarms, each with its own threshold.</p></div>
+        <div><div class="k">DELIVERY</div><h4>Channel &amp; SOS</h4><p>Choose Mobile App and/or Email, add up to three SOS contacts, and apply rules fleet-wide.</p></div>
+      </div>
+      <div class="callout warn"><span class="co-k">Tune, don't flood</span>Turning on every alert for every vehicle teaches your team to ignore alerts. Enable the events that require action, set sane thresholds, and let the rest live in the alert log for review.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.3</span><h3>Geo-Fencing</h3><span class="shape">Zones</span></div>
+      <p>Under <b>Settings › Geo-fence</b>, each row is a named area you care about entries and exits for: a yard, a job site, a customer, a no-go zone. Draw it on the map once and it becomes a reusable, alerting place.</p>
+      <div class="vid" data-vid><video src="Geo-Fencing.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">06</span><b>Geo-fence</b> · draw zones and set entry / exit alerts</div></div>
+      <ul class="wid">
+        <li><b>Current Vehicles &amp; Month visits.</b> How many vehicles are inside right now, and the visit count this month.</li>
+        <li><b>Notifications.</b> Per-zone alert mode: Off, entry, exit, or Both.</li>
+        <li><b>Trackers &amp; Operations.</b> Scope each zone to the relevant vehicles; edit, share, or delete per row.</li>
+      </ul>
+      <div class="callout"><span class="co-k">Feeds the Geo-fence visit report</span>Every zone you define here becomes selectable in the <b>Geo-fence visit</b> report (Reports walkthrough), which lists who entered and their dwell time. Set the fence once, report on it forever.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.4</span><h3>Point of Interest</h3><span class="shape">Pins</span></div>
+      <p>Under <b>Settings › Point Of Interest</b>, a POI is a single pinned location with a <b>proximity range</b>. Use it to mark depots, fuel stops, or customer sites and know when a vehicle is near one.</p>
+      <div class="vid" data-vid><video src="Point-of-Interest.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">07</span><b>Point of Interest</b> · pinned landmarks with a proximity range</div></div>
+      <ul class="wid">
+        <li><b>Name &amp; Address.</b> A label and the geocoded address for the pin.</li>
+        <li><b>Icon &amp; Range (ft).</b> A colored map icon and a radius that defines "near."</li>
+        <li><b>Notifications &amp; Trackers.</b> Optional proximity alerts (Off or Both), scoped to chosen trackers.</li>
+      </ul>
+      <div class="callout"><span class="co-k">Geo-fence vs. POI</span>Use a <b>Geo-fence</b> for an <i>area</i> and entry/exit events. Use a <b>Point of Interest</b> for <i>proximity to a point</i> within a set radius. They complement each other.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.5</span><h3>Report Scheduling</h3><span class="shape">Schedule</span></div>
+      <p>Under <b>Settings › Report Tasks</b>, schedule any report to generate and email automatically, so no one has to remember to pull it. Each task is one row you can pause, edit, or delete.</p>
+      <div class="vid" data-vid><video src="Report-Scheduling-Admin.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">08</span><b>Report Tasks</b> · report, trackers, frequency &amp; recipients</div></div>
+      <ol class="steps">
+        <li>Press <b>Add</b>, then pick the <b>Report</b> to send, such as <b>Summary</b> or Maintenance.</li>
+        <li>Select the <b>Trackers</b> it covers, and set the <b>Time</b>, for example <b>Every day</b>.</li>
+        <li>Add up to five recipient <b>Emails</b>, then <b>Save</b>. The task appears in the list, running on its own.</li>
+      </ol>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.6</span><h3>Shared Accounts</h3><span class="shape">Access</span></div>
+      <p>Under <b>Settings › Shared Account</b>, grant <b>another AccuGPS account</b> access to specific trackers of yours, ideal for an installer, a partner, or a customer who has their own login. Access is always scoped to the vehicles you choose.</p>
+      <div class="vid" data-vid><video src="Shared-Accounts.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">09</span><b>Shared Account</b> · external accounts and the trackers shared to each</div></div>
+      <ul class="wid">
+        <li><b>Account tab.</b> Lists each external <b>email</b> and how many <b>trackers</b> are shared with it; <b>Add Account</b> to invite a new one.</li>
+        <li><b>Add Tracker.</b> Per-row control to share specific vehicles, and set the function and time window they get.</li>
+        <li><b>Tracker tab.</b> The mirror view: per tracker, which accounts it is shared with.</li>
+      </ul>
+      <div class="callout"><span class="co-k">User Manager vs. Shared Account</span>Choose by <i>who</i> needs access. Your own team uses <b>User Manager</b> logins inside your account. A separate company or person with their own AccuGPS account uses <b>Shared Account</b>. Both stay scoped to specific trackers.</div>
+    </div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Configured once, this layer pays out on every screen after: accurate fuel numbers, alerts that fire only when they should, reports that arrive on their own, and outside access that never exceeds what you granted. <b>The platform runs itself, on your rules.</b></p></div>
+
+    <div class="callout"><span class="co-k">The full set</span>That completes the AccuGPS platform walkthroughs: <b>GPS Tracking</b>, <b>Camera Solutions</b>, the <b>Reports Suite</b>, and this <b>Administration</b> tour, covering the platform end to end from the first pin on the map to the last login you grant.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img src="accugps-logo.png" alt="AccuGPS" />
+    <span>Administration Walkthrough</span>
+    <span class="fr">info@accugps.com · (888) 519-9128 · accugps.com</span>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{const v=e.target.querySelector('video');if(!v)return;if(e.isIntersecting){v.play().catch(()=>{})}else{v.pause()}})},{threshold:.35});
+  document.querySelectorAll('[data-vid]').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
