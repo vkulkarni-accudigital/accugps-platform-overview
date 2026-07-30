@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AccuGPS · Reports Suite Walkthrough</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#F5A623;--orange-deep:#E8911C;--orange-soft:#FDEFD0;
+    --red:#C4262E;--red-deep:#9E1B22;--red-soft:#F7DDDF;
+    --forest:#2E443C;--forest-deep:#122023;--forest-soft:#E6ECE7;--lime:#E6FF83;
+    --cream:#FAF5E8;--cream-deep:#F0E8D3;
+    --ink:#1A1817;--ink-80:#2A2622;--ink-60:#4A4540;--ink-40:#807a72;--ink-20:#d4cec3;
+    --paper:#ffffff;--rule:#ece5d4;--rule-strong:#d4cec3;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+    --display:'Fraunces',Georgia,serif;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;background:var(--paper);-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:var(--display);font-weight:600;letter-spacing:-0.4px;line-height:1.12;margin:0}
+  p{text-wrap:pretty;margin:0}
+  a{color:var(--orange-deep);text-decoration:none}
+  a:hover{color:var(--red)}
+  .eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.32em;color:var(--orange-deep)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 40px}
+
+  .bar{position:sticky;top:0;z-index:50;background:rgba(18,32,35,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1)}
+  .bar .wrap{display:flex;align-items:center;gap:14px;height:60px}
+  .bar img{height:22px}
+  .bar .bt{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#cdd8d0}
+  .bar nav{margin-left:auto;display:flex;gap:22px}
+  .bar nav a{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#9fb0a7}
+  .bar nav a:hover{color:var(--lime)}
+
+  .hero{background:var(--forest-deep);color:var(--cream);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-16%;top:-40%;width:60vw;height:60vw;border-radius:50%;background:radial-gradient(circle,rgba(230,255,131,.09),transparent 62%)}
+  .hero .wrap{padding-top:76px;padding-bottom:76px;position:relative;z-index:1}
+  .hero .lbl{font-family:var(--mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--orange);margin-bottom:22px}
+  .hero h1{font-size:68px;line-height:1.0;font-weight:500;color:var(--cream)}
+  .hero h1 em{font-style:italic;color:var(--lime);font-weight:500}
+  .hero .sub{font-family:var(--display);font-size:21px;line-height:1.5;color:#cdd8d0;max-width:54ch;margin-top:26px}
+  .hero .meta{display:flex;gap:44px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.18);margin-top:44px;padding-top:24px}
+  .hero .meta .k{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--lime);margin-bottom:6px}
+  .hero .meta .v{font-size:15px;color:var(--cream)}
+
+  section{padding:82px 0;border-bottom:1px solid var(--rule)}
+  .sec-head{margin-bottom:30px;max-width:72ch}
+  .sec-head .eyebrow{display:block;margin-bottom:14px}
+  .sec-head h2{font-size:42px}
+  .lead{font-size:19px;line-height:1.5;color:var(--ink-60);max-width:68ch;margin-top:16px}
+  .lead b{color:var(--ink)}
+  h3{font-size:24px;margin-top:44px}
+  h3 .tagk{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--orange-deep);text-transform:uppercase;letter-spacing:.2em;display:block;margin-bottom:6px}
+  section > .wrap > p{font-size:16px;color:var(--ink-80);margin-top:12px;max-width:72ch}
+
+  .vid{margin:24px 0;border-radius:12px;overflow:hidden;border:1px solid var(--rule-strong);background:#0c1517;position:relative;box-shadow:0 18px 40px -24px rgba(18,32,35,.55)}
+  .vid video{width:100%;display:block;aspect-ratio:1918/988;background:#0c1517}
+  .vid .cap{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--forest);color:#e4ece6;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .vid .cap b{color:#fff;font-weight:600}
+  .vid .cap .fig{color:var(--lime)}
+  .vid .cap .live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:#cdd8d0;text-transform:none;letter-spacing:.04em}
+  .vid .cap .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 0 rgba(245,166,35,.6);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,166,35,.55)}70%{box-shadow:0 0 0 7px rgba(245,166,35,0)}100%{box-shadow:0 0 0 0 rgba(245,166,35,0)}}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}.hero h1{font-size:46px}.sec-head h2{font-size:32px}.wrap{padding:0 24px}}
+
+  /* report block */
+  .rpt{border-top:2px solid var(--forest);padding-top:26px;margin-top:40px}
+  .rpt:first-of-type{margin-top:28px}
+  .rpt-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .rpt-head .rn{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--orange-deep);letter-spacing:.1em}
+  .rpt-head h3{margin:0;font-size:27px}
+  .rpt-head .shape{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--forest);background:var(--forest-soft);padding:4px 11px;border-radius:999px}
+  .rpt > p{font-size:16px;color:var(--ink-80);margin-top:12px;max-width:74ch}
+
+  ul.wid{list-style:none;padding:0;margin:16px 0;max-width:76ch}
+  ul.wid li{position:relative;padding:10px 0 10px 26px;border-bottom:1px solid var(--rule);font-size:15.5px}
+  ul.wid li::before{content:"";position:absolute;left:0;top:18px;width:9px;height:9px;background:var(--orange);border-radius:2px;transform:rotate(45deg)}
+  ul.wid li b{font-weight:600}
+
+  .triad{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule-strong);border-radius:10px;overflow:hidden;margin:22px 0}
+  .triad>div{padding:18px 20px;border-right:1px solid var(--rule-strong)}
+  .triad>div:last-child{border-right:0}
+  .triad .k{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--orange-deep);margin-bottom:8px}
+  .triad h4{font-family:var(--display);font-size:18px;margin-bottom:6px}
+  .triad p{font-size:13.5px;color:var(--ink-60);line-height:1.5}
+  @media(max-width:820px){.triad{grid-template-columns:1fr}.triad>div{border-right:0;border-bottom:1px solid var(--rule-strong)}}
+
+  ol.steps{counter-reset:step;list-style:none;padding:0;margin:20px 0;max-width:74ch}
+  ol.steps>li{counter-increment:step;position:relative;padding:0 0 16px 46px;font-size:16px}
+  ol.steps>li::before{content:counter(step);position:absolute;left:0;top:-2px;width:30px;height:30px;background:var(--forest);color:#fff;border-radius:50%;font-family:var(--mono);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center}
+  ol.steps>li b{font-weight:600}
+
+  .callout{border-left:4px solid var(--orange);background:var(--orange-soft);padding:16px 20px;border-radius:0 8px 8px 0;margin:22px 0;font-size:15.5px;max-width:80ch}
+  .callout.warn{border-color:var(--red);background:var(--red-soft)}
+  .callout .co-k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.18em;font-weight:700;display:block;margin-bottom:5px;color:var(--ink-60)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}
+  .chip{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:6px 13px;border-radius:999px;border:1px solid var(--rule-strong);background:var(--cream);color:var(--ink-60)}
+  .chip b{color:var(--forest)}
+
+  .roi{display:flex;gap:20px;background:var(--forest);color:var(--cream);border-radius:10px;padding:20px 24px;margin:28px 0}
+  .roi .roi-k{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.24em;color:var(--lime);white-space:nowrap;padding-top:3px}
+  .roi p{font-size:16px;line-height:1.55;color:#e4ece6}
+  .roi p b{color:#fff}
+
+  .dtc{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+  .dtc>div{background:var(--forest);color:#fff;border-radius:10px;padding:16px 18px}
+  .dtc .dl{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--lime);margin-bottom:5px}
+  .dtc h4{color:#fff;font-size:17px;margin-bottom:5px}
+  .dtc p{font-size:12.5px;color:#cfdbd3;line-height:1.4}
+  @media(max-width:820px){.dtc{grid-template-columns:1fr 1fr}}
+
+  footer{background:var(--forest-deep);color:#9fb0a7;padding:46px 0}
+  footer .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  footer img{height:20px}
+  footer .fr{margin-left:auto;color:#cdd8d0}
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#122023"/><g transform="translate(28 30)"><rect x="0" y="34" width="10" height="22" fill="#E6FF83"/><rect x="16" y="18" width="10" height="38" fill="#F5A623"/><rect x="32" y="6" width="10" height="50" fill="#E6FF83"/></g><text x="50" y="86" font-family="Georgia,serif" font-size="12" font-weight="700" fill="#FAF5E8" text-anchor="middle">REPORTS</text></svg></template>
+
+<div class="bar">
+  <div class="wrap">
+    <img src="accugps-logo.png" alt="AccuGPS" />
+    <span class="bt">Reports Walkthrough</span>
+    <nav>
+      <a href="#far">How Far</a>
+      <a href="#long">How Long</a>
+      <a href="#much">How Much</a>
+      <a href="#healthy">How Healthy</a>
+      <a href="#setup">Setup</a>
+      <a href="#schedule">Schedule</a>
+    </nav>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="lbl">Reports Suite · Interactive Walkthrough</p>
+    <h1>Every mile.<br>Every minute.<br><em>Every dollar.</em></h1>
+    <p class="sub">A guided tour of the AccuGPS Reports library: thirteen reports that turn raw tracker data into decisions about distance, time, cost, and vehicle health. Every report is shown running on real platform video below, grouped by the question it answers.</p>
+    <div class="meta">
+      <div><div class="k">Covers</div><div class="v">13 reports · 4 questions</div></div>
+      <div><div class="k">Format</div><div class="v">Interactive video walkthrough</div></div>
+      <div><div class="k">Updated</div><div class="v">July 2026</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- INTRO: HOW REPORTS WORK -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">00 · The Pattern</span>
+      <h2>How every report works</h2>
+      <p class="lead">Learn the pattern once and all thirteen open the same way. Open <b>Reports</b> in the top navigation, pick a report, narrow it to a <b>Tracker</b> and a <b>Time</b> range, and press <b>Show</b>. Once the data is on screen, the same export buttons follow it everywhere.</p>
+    </div>
+    <div class="triad">
+      <div><div class="k">PICK</div><h4>Choose a report</h4><p>One click in the Reports menu loads that report's own controls and layout.</p></div>
+      <div><div class="k">FILTER</div><h4>Tracker &amp; time</h4><p>Almost every report takes a Tracker and a Time range, then a Show.</p></div>
+      <div><div class="k">EXPORT</div><h4>Print / CSV / Excel</h4><p>Take the result out as paper, a spreadsheet, or a raw data file.</p></div>
+    </div>
+    <div class="chips">
+      <span class="chip"><b>Print</b> · paper / PDF</span>
+      <span class="chip"><b>CSV</b> · raw data, any tool</span>
+      <span class="chip"><b>Excel</b> · formatted workbook</span>
+      <span class="chip"><b>Export</b> · labor &amp; asset reports</span>
+      <span class="chip"><b>PDF</b> · DTC fault report</span>
+    </div>
+  </div>
+</section>
+
+<!-- 01 HOW FAR -->
+<section id="far">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">01 · How far</span>
+      <h2>Movement &amp; Distance</h2>
+      <p class="lead">Where did the vehicles go, and how far? Four reports answer it at different resolutions: a full daily <b>Summary</b>, a stop-by-stop <b>Travel</b> log, a distance <b>Mileage</b> chart, and a map-based <b>Route analysis</b>.</p>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.1</span><h3>Summary</h3><span class="shape">Table</span></div>
+      <p>The most complete single report. Pick a tracker and a range and every day comes back as a row with driving, fuel, stops, and speed all in one place. It is the report to read first when you're not sure which one you need.</p>
+      <div class="vid" data-vid><video src="Summary_1.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">01</span><b>Opening Summary</b> · pick the tracker and range from the Reports menu<span class="live">Live report</span></div></div>
+      <div class="vid" data-vid><video src="Summary_2.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">02</span><b>Reading Summary</b> · one row per day, every metric side by side</div></div>
+      <ul class="wid">
+        <li><b>Travel time &amp; Fuel.</b> Total driving time and gallons consumed for the day.</li>
+        <li><b>Stop counts.</b> Total stops split into <b>0–30 min</b>, <b>30 min–2 h</b>, and longer bands, separating short errands from long dwells.</li>
+        <li><b>Average &amp; Max speed.</b> The day's mean speed and its single fastest reading.</li>
+        <li><b>Speed bands.</b> Percent of time in each range: <b>0–5, 5–20, 20–45, 45–75,</b> and <b>≥75 mph</b>.</li>
+      </ul>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.2</span><h3>Travel</h3><span class="shape">Timeline</span></div>
+      <p>Where Summary aggregates, Travel narrates. It lays the day out as a timeline of alternating drives and stops, each with a time, a duration, and, for stops, a street address.</p>
+      <div class="vid" data-vid><video src="Travel.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">03</span><b>Travel</b> · departures, stops, and addresses down the day</div></div>
+      <ul class="wid">
+        <li><b>Driving segments.</b> Every leg with its own departure time, duration, and distance.</li>
+        <li><b>Stops.</b> Numbered markers with dwell time and the exact address where the vehicle sat.</li>
+        <li><b>Daily totals.</b> Total Distance, Total Stopped Time, and Total Traveled Time.</li>
+      </ul>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.3</span><h3>Mileage</h3><span class="shape">Bar chart</span></div>
+      <p>A clean bar chart of miles driven each day across the range. Tall bars are heavy days, gaps are idle days: the shape of the month in one look, ideal for spotting utilization patterns.</p>
+      <div class="vid" data-vid><video src="Mileage.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">04</span><b>Mileage</b> · daily distance across the selected range</div></div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">2.4</span><h3>Route analysis</h3><span class="shape">Map</span></div>
+      <p>Route analysis draws the real routes vehicles took on the map. Unlike the single-tracker reports, it takes a time range and lets you tick <b>multiple trackers</b> at once, which is useful for comparing coverage or auditing a service area.</p>
+      <div class="grid2">
+        <div class="vid" data-vid><video src="Route-Analysis_1.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">05</span><b>Setup</b> · pick a time range and the trackers to plot</div></div>
+        <div class="vid" data-vid><video src="Route-Analysis_2.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">06</span><b>Plotted</b> · each vehicle's real route on the map</div></div>
+      </div>
+    </div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Distance is the denominator behind cost-per-mile, billing, and utilization. Seeing it four ways (summed, sequenced, charted, and mapped) lets you <b>bill accurately, right-size the fleet, and settle route disputes with the actual path driven.</b></p></div>
+  </div>
+</section>
+
+<!-- 02 HOW LONG -->
+<section id="long">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">02 · How long</span>
+      <h2>Time &amp; Labor</h2>
+      <p class="lead">Distance tells you how far; these reports tell you <b>how the hours were spent</b> · driving, idling, engine-on, and on the clock. They turn the tracker into a timekeeper for payroll, idle-cost control, and hours-of-service compliance.</p>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">3.1</span><h3>Driving time</h3><span class="shape">Bar chart</span></div>
+      <p>A daily bar chart that separates three states so you can see not just whether a vehicle worked but how. Excessive idle or engine-on time with little driving is wasted fuel and wear.</p>
+      <div class="vid" data-vid><video src="Driving-Time.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">07</span><b>Driving time</b> · Driving, Idle, and Orange-wire-on hours per day</div></div>
+      <div class="triad">
+        <div><div class="k">DRIVING</div><h4>In motion</h4><p>Hours the vehicle was actually moving down the road.</p></div>
+        <div><div class="k">IDLE</div><h4>Stopped, running</h4><p>Engine on but not moving. The number to drive down.</p></div>
+        <div><div class="k">ORANGE WIRE</div><h4>Engine on</h4><p>Total ignition-on time, the envelope around driving + idle.</p></div>
+      </div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">3.2</span><h3>Work Hour</h3><span class="shape">Export</span></div>
+      <p>Work Hour turns movement into a labor record. Choose a From / To date span and a Daily Starting Time, tick the drivers (or All Trackers), and Export. The report derives each day's working hours from first movement to last stop.</p>
+      <div class="vid" data-vid><video src="Work-hours.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">08</span><b>Work Hour</b> · date span, start time, driver selection, Export</div></div>
+      <ul class="wid">
+        <li><b>From / To.</b> The pay period or any date span you want to total.</li>
+        <li><b>Daily Starting Time.</b> Sets when each work day begins so overnight shifts land on the right day.</li>
+        <li><b>Driver selection.</b> Tick All Trackers or individual drivers, then Export for the timesheet.</li>
+      </ul>
+      <div class="callout"><span class="co-k">Payroll-ready</span>Because hours come from the vehicle itself, Work Hour gives an <b>objective</b> record to check against submitted timesheets, with no rounding and no guesswork.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">3.3</span><h3>Orange wire</h3><span class="shape">Timeline</span></div>
+      <p>The "orange wire" is powered whenever the engine is on. This report lists each engine-on and idle period down the day with its address, and totals them at the bottom, a location-aware view of where time and fuel go.</p>
+      <div class="vid" data-vid><video src="Orange-Wire.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">09</span><b>Orange wire</b> · engine-on and idle periods by location</div></div>
+      <ul class="wid">
+        <li><b>Per-period rows.</b> Each engine-on and idle span stamped with time and street address.</li>
+        <li><b>Totals.</b> Total Orange wire on and Total Idle Time for the range.</li>
+        <li><b>Idle filter.</b> Merge brief shutdowns below a chosen threshold to clean up the timeline.</li>
+      </ul>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">3.4</span><h3>E-log</h3><span class="shape">Log</span></div>
+      <p>The E-log report holds electronic <b>duty-status</b> records for hours-of-service compliance: the digital logbook regulated drivers keep. Configuration and driver assignment for ELD are covered in the Administration guide.</p>
+      <div class="vid" data-vid><video src="Elog.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">10</span><b>E-log</b> · hours-of-service duty-status records</div></div>
+    </div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Idle time burns fuel and engine life for zero miles; unverified timesheets inflate payroll. Measuring both against the vehicle's own record turns soft costs into hard, correctable numbers. <b>Cut idling, pay for hours actually worked.</b></p></div>
+  </div>
+</section>
+
+<!-- 03 HOW MUCH -->
+<section id="much">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">03 · How much</span>
+      <h2>Cost &amp; Compliance</h2>
+      <p class="lead">These reports speak the language of the finance and compliance desks: <b>fuel burned, taxes owed,</b> and <b>time spent at key sites.</b> They convert location data into the numbers that go on filings and invoices.</p>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">4.1</span><h3>Fuel</h3><span class="shape">Bar chart</span></div>
+      <p>A daily bar chart of gallons consumed. Read it alongside the Mileage chart: high fuel with low miles points at idling or heavy loads, while the ratio of the two is effectively your MPG trend over the range.</p>
+      <div class="vid" data-vid><video src="Fuel.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">11</span><b>Fuel</b> · daily gallons consumed</div></div>
+      <div class="callout"><span class="co-k">Set the baseline first</span>Fuel figures depend on each unit's <b>city and highway fuel economy</b>, set at the unit level in Settings, covered in the Reporting Settings section below.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">4.2</span><h3>IFTA (State Miles)</h3><span class="shape">Table</span></div>
+      <p>For fleets that cross state lines, IFTA reporting requires miles driven per jurisdiction. This report breaks the range's distance out <b>by state</b> · ready to drop into a quarterly fuel-tax filing.</p>
+      <div class="vid" data-vid><video src="IFTA-Miles.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">12</span><b>IFTA</b> · state-by-state mileage for the range</div></div>
+      <div class="callout"><span class="co-k">Filing made simple</span>Export to <b>Excel</b> or <b>CSV</b> to feed your IFTA return directly. The platform tracks the state boundaries so you don't reconstruct them from a mileage log.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">4.3</span><h3>Geo-fence visit</h3><span class="shape">Table</span></div>
+      <p>Pick a geofence (a yard, a job site, a customer) and a From / To range, and the report lists every vehicle that entered, with arrival, departure, and dwell time for each visit.</p>
+      <div class="vid" data-vid><video src="Geofence.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">13</span><b>Geo-fence visit</b> · arrivals, departures, and dwell time</div></div>
+      <ul class="wid">
+        <li><b>Geo-fence.</b> Choose which fence to report on from the dropdown.</li>
+        <li><b>Visit from / Stay until.</b> Timestamped arrival and departure for each visit.</li>
+        <li><b>Duration.</b> Exact dwell time: the number for site-time billing or SLA checks.</li>
+      </ul>
+    </div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Fuel and taxes are among the largest line items a fleet carries, and site-time is often billable. Pulling all three straight from tracker data means <b>defensible IFTA filings, tighter fuel oversight, and invoices backed by exact dwell times.</b></p></div>
+  </div>
+</section>
+
+<!-- 04 HOW HEALTHY -->
+<section id="healthy">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">04 · How healthy</span>
+      <h2>Vehicle Health</h2>
+      <p class="lead">The last pair of reports looks <b>inward</b>, at the machines themselves, tracking service intervals so nothing gets missed, and surfacing the engine's own <b>diagnostic trouble codes</b> the moment they appear.</p>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">5.1</span><h3>Maintenance</h3><span class="shape">Table</span></div>
+      <p>A per-asset table of odometer and engine hours, both Total (lifetime) and Current (since last service), with controls to define what "due" means and to log what's been done.</p>
+      <div class="grid2">
+        <div class="vid" data-vid><video src="Maintenance_1.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">14</span><b>The table</b> · odometer &amp; engine hours per asset</div></div>
+        <div class="vid" data-vid><video src="Maintenance_2.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">15</span><b>Intervals &amp; history</b> · set what "due" means, log services</div></div>
+      </div>
+      <ul class="wid">
+        <li><b>Total vs. Current.</b> Lifetime odometer/engine time beside the counters since the last service reset.</li>
+        <li><b>Service Interval.</b> Set the mileage or hour threshold at which each service becomes due.</li>
+        <li><b>Service history.</b> A running log of completed services per asset for warranty and resale records.</li>
+      </ul>
+      <div class="callout"><span class="co-k">Preventive, not reactive</span>Setting intervals turns Maintenance from a record into an early-warning system: oil changes, inspections, and PM come due <b>before</b> a breakdown, not after.</div>
+    </div>
+
+    <div class="rpt">
+      <div class="rpt-head"><span class="rn">5.2</span><h3>DTC</h3><span class="shape">Cards + PDF</span></div>
+      <p>When the engine throws a fault, the OBD device reads its Diagnostic Trouble Code. The DTC report groups codes into the four standard families so you can tell at a glance which system is affected, and exports a PDF for the shop.</p>
+      <div class="vid" data-vid><video src="DTC.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">16</span><b>DTC</b> · trouble codes grouped by system, with PDF export</div></div>
+      <div class="dtc">
+        <div><div class="dl">P</div><h4>Powertrain</h4><p>Engine &amp; transmission / gearbox.</p></div>
+        <div><div class="dl">B</div><h4>Body</h4><p>Includes A/C &amp; air bag.</p></div>
+        <div><div class="dl">C</div><h4>Chassis</h4><p>Includes ABS &amp; braking.</p></div>
+        <div><div class="dl">U</div><h4>User Network</h4><p>Wiring bus / UART.</p></div>
+      </div>
+    </div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Missed service and ignored fault codes are how a cheap fix becomes a roadside failure. Watching intervals and DTCs from the office means <b>fewer breakdowns, longer asset life, and repairs scheduled on your terms, not the truck's.</b></p></div>
+  </div>
+</section>
+
+<!-- 05 REPORTING SETTINGS -->
+<section id="setup">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">05 · Behind the numbers</span>
+      <h2>Reporting Settings</h2>
+      <p class="lead">The Fuel and Summary reports can only be as accurate as the vehicles behind them. Before you trust a gallon figure, set each unit's <b>fuel economy</b> · because AccuGPS derives fuel from distance driven, the platform needs to know how far each vehicle goes on a gallon in the city and on the highway.</p>
+    </div>
+
+    <p>Open <b>Settings › Reporting</b>. Pick a <b>Tracker</b> from the dropdown, then enter its two fuel-economy figures. The reports immediately use these rates to turn miles into gallons.</p>
+
+    <div class="vid" data-vid><video src="Fuel_Economy.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">17</span><b>Settings › Reporting</b> · city &amp; highway MPG set per unit</div></div>
+
+    <div class="triad">
+      <div><div class="k">CITY</div><h4>Fuel economy (city)</h4><p>Miles per gallon in stop-and-go driving: the rate applied to low-speed, high-idle time.</p></div>
+      <div><div class="k">HIGHWAY</div><h4>Fuel economy (hwy)</h4><p>Miles per gallon at cruising speed: the rate applied to sustained highway travel.</p></div>
+      <div><div class="k">SCOPE</div><h4>Apply to all trackers</h4><p>Set one vehicle, then push the same rates across the whole fleet in a click.</p></div>
+    </div>
+
+    <ul class="wid">
+      <li><b>Per-unit accuracy.</b> Every tracker carries its own city and highway MPG, so a cargo van and a pickup aren't estimated with the same rate.</li>
+      <li><b>Apply to all trackers.</b> For a uniform fleet, enter the numbers once and tick <b>Apply to all trackers</b> to copy them everywhere.</li>
+      <li><b>Save to apply.</b> Press <b>Save</b> and the Fuel report, plus fuel figures in Summary, recalculate on the new rates.</li>
+    </ul>
+
+    <div class="callout warn"><span class="co-k">Why this matters first</span>Skip this step and fuel numbers default to a generic estimate. Two minutes per unit here is the difference between a fuel report you can put in front of finance and one you can't.</div>
+  </div>
+</section>
+
+<!-- 06 SCHEDULED REPORT TASKS -->
+<section id="schedule">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">06 · On autopilot</span>
+      <h2>Scheduled Report Tasks</h2>
+      <p class="lead">Every report so far you ran by hand. A <b>Report Task</b> runs one for you on a schedule and <b>emails it out</b> · so the Monday mileage recap or the daily driver timesheet lands in the right inboxes without anyone opening the platform.</p>
+    </div>
+
+    <p>From <b>Settings › Report Tasks</b>, press <b>Add</b> to build a task. Choose the report, the trackers it covers, how often it runs, and who receives it.</p>
+
+    <div class="vid" data-vid><video src="Report-Scheduling.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">18</span><b>Setting a Report Task</b> · report, trackers, frequency &amp; recipients</div></div>
+
+    <ol class="steps">
+      <li>Pick the <b>Report</b> to send, e.g. <b>Summary</b>, Mileage, or Work Hour.</li>
+      <li>Select the <b>Trackers</b> it covers: tick <b>All Trackers</b> or choose specific vehicles from the grid.</li>
+      <li>Set the <b>Time</b> · how often it runs, such as <b>Every day</b>.</li>
+      <li>Add up to <b>5 recipient emails</b>, then <b>Save</b> · the task appears in the list, ready to edit or remove.</li>
+    </ol>
+
+    <div class="triad">
+      <div><div class="k">WHAT</div><h4>Any report</h4><p>Schedule the same library you run by hand, and the task delivers it on time.</p></div>
+      <div><div class="k">WHEN</div><h4>On a cadence</h4><p>Recurring delivery, e.g. every day, so recaps arrive without a reminder.</p></div>
+      <div><div class="k">WHO</div><h4>Up to 5 inboxes</h4><p>Route each report to the people who act on it: dispatch, finance, or a client.</p></div>
+    </div>
+
+    <div class="callout"><span class="co-k">Set once, runs forever</span>A handful of tasks (a daily timesheet to payroll, a weekly mileage recap to the owner, a monthly IFTA pull to the accountant) turns reporting from a chore into something that just shows up.</div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Accurate fuel rates plus automated delivery mean the numbers are both <b>right</b> and <b>in front of the people who need them</b> · without a manager remembering to pull a single report. <b>The fleet reports on itself.</b></p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img src="accugps-logo.png" alt="AccuGPS" />
+    <span>Reports Suite Walkthrough</span>
+    <span class="fr">info@accugps.com · (888) 519-9128 · accugps.com</span>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{const v=e.target.querySelector('video');if(!v)return;if(e.isIntersecting){v.play().catch(()=>{})}else{v.pause()}})},{threshold:.35});
+  document.querySelectorAll('[data-vid]').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
