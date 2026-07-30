@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>AccuGPS · GPS Suite Walkthrough</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#F5A623;--orange-deep:#E8911C;--orange-soft:#FDEFD0;
+    --red:#C4262E;--red-deep:#9E1B22;--red-soft:#F7DDDF;
+    --forest:#2E443C;--forest-deep:#122023;--forest-soft:#E6ECE7;--lime:#E6FF83;
+    --cream:#FAF5E8;--cream-deep:#F0E8D3;
+    --ink:#1A1817;--ink-80:#2A2622;--ink-60:#4A4540;--ink-40:#807a72;--ink-20:#d4cec3;
+    --paper:#ffffff;--rule:#ece5d4;--rule-strong:#d4cec3;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+    --display:'Fraunces',Georgia,serif;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;background:var(--paper);-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:var(--display);font-weight:600;letter-spacing:-0.4px;line-height:1.12;margin:0}
+  p{text-wrap:pretty;margin:0}
+  a{color:var(--orange-deep);text-decoration:none}
+  a:hover{color:var(--red)}
+  .eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.32em;color:var(--orange-deep)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 40px}
+
+  /* sticky top bar */
+  .bar{position:sticky;top:0;z-index:50;background:rgba(18,32,35,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1)}
+  .bar .wrap{display:flex;align-items:center;gap:14px;height:60px}
+  .bar img{height:22px}
+  .bar .bt{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#cdd8d0}
+  .bar nav{margin-left:auto;display:flex;gap:26px}
+  .bar nav a{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#9fb0a7}
+  .bar nav a:hover{color:var(--lime)}
+
+  /* hero */
+  .hero{background:var(--forest-deep);color:var(--cream);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-16%;top:-40%;width:60vw;height:60vw;border-radius:50%;background:radial-gradient(circle,rgba(230,255,131,.09),transparent 62%)}
+  .hero .wrap{padding-top:76px;padding-bottom:76px;position:relative;z-index:1}
+  .hero .lbl{font-family:var(--mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--orange);margin-bottom:22px}
+  .hero h1{font-size:68px;line-height:1.0;font-weight:500;color:var(--cream)}
+  .hero h1 em{font-style:italic;color:var(--lime);font-weight:500}
+  .hero .sub{font-family:var(--display);font-size:21px;line-height:1.5;color:#cdd8d0;max-width:52ch;margin-top:26px}
+  .hero .meta{display:flex;gap:44px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.18);margin-top:44px;padding-top:24px}
+  .hero .meta .k{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--lime);margin-bottom:6px}
+  .hero .meta .v{font-size:15px;color:var(--cream)}
+
+  /* section scaffold */
+  section{padding:82px 0;border-bottom:1px solid var(--rule)}
+  .sec-head{margin-bottom:30px;max-width:70ch}
+  .sec-head .eyebrow{display:block;margin-bottom:14px}
+  .sec-head h2{font-size:42px}
+  .lead{font-size:19px;line-height:1.5;color:var(--ink-60);max-width:66ch;margin-top:16px}
+  .lead b{color:var(--ink)}
+  h3{font-size:24px;margin-top:44px}
+  h3 .tagk{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--orange-deep);text-transform:uppercase;letter-spacing:.2em;display:block;margin-bottom:6px}
+  section > .wrap > p{font-size:16px;color:var(--ink-80);margin-top:12px;max-width:70ch}
+
+  /* video player */
+  .vid{margin:26px 0;border-radius:12px;overflow:hidden;border:1px solid var(--rule-strong);background:#0c1517;position:relative;box-shadow:0 18px 40px -24px rgba(18,32,35,.55)}
+  .vid video{width:100%;display:block;aspect-ratio:1918/988;background:#0c1517}
+  .vid.tall video{aspect-ratio:1918/1094}
+  .vid .cap{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--forest);color:#e4ece6;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .vid .cap b{color:#fff;font-weight:600}
+  .vid .cap .fig{color:var(--lime)}
+  .vid .cap .live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:#cdd8d0;text-transform:none;letter-spacing:.04em}
+  .vid .cap .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 0 0 rgba(245,166,35,.6);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,166,35,.55)}70%{box-shadow:0 0 0 7px rgba(245,166,35,0)}100%{box-shadow:0 0 0 0 rgba(245,166,35,0)}}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}.hero h1{font-size:46px}.sec-head h2{font-size:32px}.wrap{padding:0 24px}}
+
+  .triad{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule-strong);border-radius:10px;overflow:hidden;margin:26px 0}
+  .triad>div{padding:20px 22px;border-right:1px solid var(--rule-strong)}
+  .triad>div:last-child{border-right:0}
+  .triad .k{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--orange-deep);margin-bottom:9px}
+  .triad h4{font-family:var(--display);font-size:19px;margin-bottom:7px}
+  .triad p{font-size:14px;color:var(--ink-60);line-height:1.5}
+  @media(max-width:820px){.triad{grid-template-columns:1fr}.triad>div{border-right:0;border-bottom:1px solid var(--rule-strong)}}
+
+  ul.wid{list-style:none;padding:0;margin:18px 0;max-width:72ch}
+  ul.wid li{position:relative;padding:11px 0 11px 26px;border-bottom:1px solid var(--rule);font-size:16px}
+  ul.wid li::before{content:"";position:absolute;left:0;top:19px;width:9px;height:9px;background:var(--orange);border-radius:2px;transform:rotate(45deg)}
+  ul.wid li b{font-weight:600}
+
+  .callout{border-left:4px solid var(--orange);background:var(--orange-soft);padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;font-size:15.5px;max-width:78ch}
+  .callout.warn{border-color:var(--red);background:var(--red-soft)}
+  .callout .co-k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.18em;font-weight:700;display:block;margin-bottom:5px;color:var(--ink-60)}
+
+  /* method / feature grid */
+  .ways{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:26px 0}
+  .way{border:1px solid var(--rule-strong);border-radius:10px;padding:20px 22px;background:var(--cream)}
+  .way .wn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--orange-deep);display:flex;align-items:center;gap:10px;margin-bottom:11px}
+  .way .wn span{width:24px;height:24px;background:var(--forest);color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+  .way h4{font-family:var(--display);font-size:20px;margin-bottom:7px}
+  .way p{font-size:14.5px;color:var(--ink-60);line-height:1.5}
+  .way p b{color:var(--ink);font-weight:600}
+  @media(max-width:820px){.ways{grid-template-columns:1fr}}
+
+  .steps{counter-reset:step;list-style:none;padding:0;margin:22px 0;max-width:74ch}
+  .steps>li{counter-increment:step;position:relative;padding:0 0 18px 48px;font-size:16px}
+  .steps>li::before{content:counter(step);position:absolute;left:0;top:-2px;width:32px;height:32px;background:var(--forest);color:#fff;border-radius:50%;font-family:var(--mono);font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center}
+  .steps>li b{font-weight:600}
+
+  table.ref{width:100%;border-collapse:collapse;margin:22px 0;font-size:14.5px}
+  table.ref thead th{background:var(--forest);color:var(--cream);text-align:left;padding:11px 14px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:600}
+  table.ref tbody td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+  table.ref tbody tr:nth-child(even){background:var(--cream)}
+  table.ref tbody td:first-child{font-weight:600;white-space:nowrap}
+  table.ref .cat{font-family:var(--mono);font-size:10px;color:var(--ink-40);text-transform:uppercase;letter-spacing:.06em;display:block;margin-top:2px}
+
+  .defgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;margin:22px 0}
+  .defgrid .d{padding:12px 0;border-bottom:1px solid var(--rule);font-size:15px;line-height:1.45}
+  .defgrid .d b{font-weight:600;color:var(--ink)}
+  .defgrid .d .tag{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;margin-left:6px;vertical-align:middle}
+  .tag.driving{background:var(--red-soft);color:var(--red-deep)}
+  .tag.security{background:var(--forest-soft);color:var(--forest)}
+  .tag.status{background:var(--orange-soft);color:var(--orange-deep)}
+  .tag.system{background:#e9e4d6;color:var(--ink-60)}
+  @media(max-width:820px){.defgrid{grid-template-columns:1fr}}
+
+  .roi{display:flex;gap:20px;background:var(--forest);color:var(--cream);border-radius:10px;padding:20px 24px;margin:30px 0}
+  .roi .roi-k{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.24em;color:var(--lime);white-space:nowrap;padding-top:3px}
+  .roi p{font-size:16px;line-height:1.55;color:#e4ece6}
+  .roi p b{color:#fff}
+
+  footer{background:var(--forest-deep);color:#9fb0a7;padding:46px 0}
+  footer .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  footer img{height:20px}
+  footer .fr{margin-left:auto;color:#cdd8d0}
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#122023"/><g transform="translate(50 42)"><circle r="15" fill="none" stroke="#E6FF83" stroke-width="3.5"/><circle r="5" fill="#F5A623"/></g><text x="50" y="82" font-family="Georgia,serif" font-size="13" font-weight="700" fill="#FAF5E8" text-anchor="middle">GPS</text></svg></template>
+
+<div class="bar">
+  <div class="wrap">
+    <img src="accugps-logo.png" alt="AccuGPS" />
+    <span class="bt">GPS Walkthrough</span>
+    <nav>
+      <a href="#map">Live Map</a>
+      <a href="#replay">Trip Replay</a>
+      <a href="#alerts">OBD Alerts</a>
+    </nav>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="lbl">GPS Suite · Interactive Walkthrough</p>
+    <h1>See it.<br>Replay it.<br><em>Act on it.</em></h1>
+    <p class="sub">A guided tour of the GPS side of AccuGPS — watch every asset move on the Live Map, reconstruct any trip as a breadcrumb replay, and read the engine-level OBD alerts your trackers send. Every step is shown on real platform video below.</p>
+    <div class="meta">
+      <div><div class="k">Covers</div><div class="v">Live Map · Trip Replay · OBD Alerts</div></div>
+      <div><div class="k">Format</div><div class="v">Interactive video walkthrough</div></div>
+      <div><div class="k">Updated</div><div class="v">July 2026</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 01 LIVE MAP -->
+<section id="map">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">01 · The Where</span>
+      <h2>The Fleet Map &amp; Live Tracking</h2>
+      <p class="lead">Where every asset is, right now. The <b>Fleet</b> view pairs the <b>Sidebar</b> — a live list of your devices — with the <b>Live Map</b>, where each device is a pin that expands into an asset card. It's the day-to-day cockpit that answers "where is it?" in a glance.</p>
+    </div>
+
+    <div class="triad">
+      <div><div class="k">SEE</div><h4>Live position</h4><p>Location, speed, heading, and status for every asset, updated continuously.</p></div>
+      <div><div class="k">TRACE</div><h4>Follow live</h4><p>Lock the map to one asset and watch it move across the screen.</p></div>
+      <div><div class="k">SHARE</div><h4>Position link</h4><p>Send anyone a temporary, login-free link to a vehicle's live location.</p></div>
+    </div>
+
+    <div class="vid tall" data-vid><video src="Login_Replay_part2.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">01</span><b>The Fleet view</b> — device Sidebar and the Live Map, every asset a pin<span class="live">Live map</span></div></div>
+
+    <p>Sign in at <b>i.accugps.com</b> and the Fleet view opens on the whole fleet. The <b>Sidebar</b> at the left lists every device with a live status chip — Moving, Slowing, Stopped, or Offline — plus heading, speed, and a visible count such as <b>59&nbsp;/&nbsp;115</b>. Search or filter to narrow the list; the map re-centers on whatever you focus.</p>
+
+    <h3><span class="tagk">The asset card</span>One click, everything about a vehicle</h3>
+    <p>Click any pin to open its asset card. It reads out status &amp; speed, Fleet, Tracker Class, last update time, temperature, battery, and the full reverse-geocoded street address — with quick actions along the bottom.</p>
+
+    <div class="vid tall" data-vid><video src="Login_Replay_part3.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">02</span><b>The asset card</b> — live readout plus Trip replay, Trace, Share &amp; Note</div></div>
+
+    <div class="ways">
+      <div class="way"><div class="wn"><span>1</span>Trip replay</div><h4>Jump to history</h4><p>Opens this vehicle straight into <b>Trip Replay</b> for the last window — covered next.</p></div>
+      <div class="way"><div class="wn"><span>2</span>Start tracing</div><h4>Follow live</h4><p>Locks the map to the asset so it stays centered as it <b>moves in real time</b>.</p></div>
+      <div class="way"><div class="wn"><span>3</span>Share position</div><h4>Login-free link</h4><p>Generates a <b>temporary link</b> anyone can open to watch the vehicle move — ideal for customer ETAs.</p></div>
+      <div class="way"><div class="wn"><span>4</span>Always visible</div><h4>Pin it on</h4><p>Keeps the asset plotted on the map even when filters would otherwise hide it.</p></div>
+    </div>
+
+    <div class="callout"><span class="co-k">Share Position</span>The <b>Share position</b> link needs no AccuGPS login — the recipient sees the vehicle move in real time until the link expires. It turns live location into a customer-facing service without giving outsiders a seat in the platform.</div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Cuts "where's my driver?" phone traffic, shortens dispatch decisions, and turns live location into a customer-facing ETA — all from one screen. <b>Complete visibility, from anywhere, in real time.</b></p></div>
+  </div>
+</section>
+
+<!-- 02 TRIP REPLAY -->
+<section id="replay">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">02 · The What</span>
+      <h2>Trip Replay</h2>
+      <p class="lead">Play back any tracker's history like a movie. Trip Replay reconstructs a vehicle's route for a chosen window as a <b>breadcrumb trail</b> on the map — with stops, speed violations, alerts, and photos plotted along the way — then lets you animate it and export the data.</p>
+    </div>
+
+    <h3><span class="tagk">Build it</span>Running a replay</h3>
+    <ol class="steps">
+      <li>Open <b>Trip Replay</b> from the top navigation, or click <b>Trip replay</b> on any asset card.</li>
+      <li>Pick the <b>Tracker</b>, then a <b>Time</b> preset (e.g. This week) or a custom <b>From</b> / <b>To</b>.</li>
+      <li>Optionally set a <b>Daily Starting Time</b> to trim each day to working hours.</li>
+      <li>Press <b>Show</b> — the route draws on the map and the timeline fills in on the right.</li>
+    </ol>
+
+    <div class="vid" data-vid><video src="Trip_Replay-GPS_1.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">03</span><b>Setting up a replay</b> — pick the tracker and window, then Show<span class="live">Playback</span></div></div>
+
+    <h3><span class="tagk">Read it</span>Trail, stops &amp; totals</h3>
+    <p>The route draws as a point-by-point <b>breadcrumb trail</b> with Start and End flags. The timeline on the right alternates driving legs and numbered stops, and the totals summarize the whole window.</p>
+    <ul class="wid">
+      <li><b>Breadcrumb trail.</b> The exact path traveled, point by point, from Start flag to End flag.</li>
+      <li><b>Layer filters.</b> Toggle <b>POI</b>, <b>Stop</b>, <b>Speed violation</b>, <b>Alert</b>, and <b>Photo</b> markers on the route.</li>
+      <li><b>Stops &amp; events.</b> The timeline alternates driving legs (duration + distance) and numbered stops (dwell time + exact address).</li>
+      <li><b>Totals.</b> Running <b>Total Distance</b>, <b>Total Stopped Time</b>, and <b>Total Traveled Time</b>.</li>
+      <li><b>Playback.</b> Animate the vehicle along its route at <b>Slow</b>, <b>Medium</b>, or <b>Fast</b>, with rewind / play / fast-forward to scrub.</li>
+    </ul>
+
+    <div class="vid" data-vid><video src="Trip_Replay-GPS_2.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">04</span><b>The full route</b> — breadcrumb trail with the stop-by-stop timeline and totals</div></div>
+
+    <div class="grid2">
+      <div class="vid" data-vid><video src="Trip_Replay-GPS_3.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">05</span><b>A single stop</b> — dwell time and exact address on the trail</div></div>
+      <div class="vid" data-vid><video src="Trip_Replay-Map_1.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">06</span><b>Map layers</b> — the same route on Map, Satellite &amp; Traffic</div></div>
+    </div>
+
+    <h3><span class="tagk">Export</span>Getting the data out</h3>
+    <p>Two independent exports sit above the timeline, each offering <b>CSV</b> or <b>Excel</b> — the summarized trip and the raw position points behind it.</p>
+    <div class="ways">
+      <div class="way"><div class="wn"><span>A</span>Export Trip Timeline</div><h4>The drives-and-stops list</h4><p>One row per leg. Best for <b>trip logs, mileage claims, and stop verification</b>.</p></div>
+      <div class="way"><div class="wn"><span>B</span>Export Position Data</div><h4>The raw GPS points</h4><p>Every position point behind the route line. Best for <b>detailed analysis</b> or importing elsewhere.</p></div>
+    </div>
+
+    <div class="callout"><span class="co-k">Daily Starting Time</span>Replaying several days at once? Set a <b>Daily Starting Time</b> to trim each day to working hours — the trail skips the overnight parking and shows only the routes that matter.</div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Settles disputes with a timestamped record: was the crew on site, did the route match the invoice, who was where when an incident happened. <b>Historical auditing without anyone having to remember the day.</b></p></div>
+  </div>
+</section>
+
+<!-- 03 OBD ALERTS -->
+<section id="alerts">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">03 · Safety</span>
+      <h2>OBD Alerts</h2>
+      <p class="lead">OBD alerts are events read directly from the vehicle's <b>OBD / engine bus</b> — harsh driving, ignition changes, tampering, and engine faults. They add engine-level context GPS alone can't see, surface on the <b>Alerts</b> center, and feed the unread badge in the top navigation.</p>
+    </div>
+
+    <div class="vid" data-vid><video src="OBD_Alerts_1.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">07</span><b>The Alerts center</b>, OBD tab — engine-level events per tracker on the map<span class="live">Live feed</span></div></div>
+
+    <h3><span class="tagk">The Alerts center</span>Finding what you need</h3>
+    <p>Open <b>Alerts</b> from the top navigation. Four tabs group the feed — <b>Normal</b>, <b>OBD</b>, <b>DTC</b>, and <b>AI</b>. This walkthrough covers the <b>OBD</b> tab.</p>
+    <ul class="wid">
+      <li><b>Filter</b> by <b>Tracker</b> (one device or All), <b>Type</b> (a single alert or All), and <b>Time</b>, then press <b>Show</b>.</li>
+      <li><b>Each row</b> shows the tracker, time, alert type with icon, and <b>Get Address</b> to resolve coordinates to a street address, plus any note.</li>
+      <li><b>Manage</b> the feed with <b>Export</b>, <b>Clear All</b>, and <b>Mark All As Read</b>; long feeds paginate.</li>
+    </ul>
+    <div class="grid2">
+      <div class="vid" data-vid><video src="OBD_Alerts_2.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">08</span><b>Filter by Type</b> — narrow the feed to one OBD alert</div></div>
+      <div class="vid" data-vid><video src="OBD_Alerts_4.mp4" muted loop playsinline preload="metadata" controls></video><div class="cap"><span class="fig">09</span><b>Reading the feed</b> — tracker, time, type &amp; address per row</div></div>
+    </div>
+
+    <div class="callout warn"><span class="co-k">The 99+ badge</span>The number beside <b>Alerts</b> is the unread count across all tabs. A persistent <b>99+</b> usually means thresholds are firing more often than expected — tune sensitivity in <b>Settings › Notifications</b>, or filter to the noisiest type to find the cause.</div>
+
+    <h3><span class="tagk">Reference</span>The OBD alert catalog</h3>
+    <p>Every OBD alert type your trackers can raise. All report with the <b>(OBD)</b> suffix in the platform. Tags: <span class="tag driving">Driving</span> behavior/safety · <span class="tag security">Security</span> theft &amp; tamper · <span class="tag status">Status</span> normal state changes · <span class="tag system">System</span> device/engine health.</p>
+    <div class="defgrid">
+      <div class="d"><b>Hard acceleration</b><span class="tag driving">Driving</span><br>Aggressive throttle from the engine bus.</div>
+      <div class="d"><b>Hard deceleration</b><span class="tag driving">Driving</span><br>Aggressive braking from the engine bus.</div>
+      <div class="d"><b>High RPM</b><span class="tag driving">Driving</span><br>Engine RPM over the configured threshold.</div>
+      <div class="d"><b>Quick lane change</b><span class="tag driving">Driving</span><br>Sudden lateral movement — an abrupt lane change.</div>
+      <div class="d"><b>Sharp turn</b><span class="tag driving">Driving</span><br>Hard cornering event.</div>
+      <div class="d"><b>Fatigue driving</b><span class="tag driving">Driving</span><br>Extended driving without adequate rest.</div>
+      <div class="d"><b>Dangerous driving</b><span class="tag driving">Driving</span><br>Aggregate dangerous-driving event.</div>
+      <div class="d"><b>Idle engine</b><span class="tag driving">Driving</span><br>Engine idling detected via OBD — fuel waste.</div>
+      <div class="d"><b>Towing</b><span class="tag security">Security</span><br>Vehicle moved while off (towed or rolled).</div>
+      <div class="d"><b>Crash alarm</b><span class="tag security">Security</span><br>Crash / impact detected via OBD.</div>
+      <div class="d"><b>Geofence alarm</b><span class="tag security">Security</span><br>Geo-fence entry or exit via OBD.</div>
+      <div class="d"><b>Tamper</b><span class="tag security">Security</span><br>Device tampering detected.</div>
+      <div class="d"><b>Illegal ignition</b><span class="tag security">Security</span><br>Unauthorized engine start.</div>
+      <div class="d"><b>Vibration alarm</b><span class="tag security">Security</span><br>Abnormal vibration detected while parked.</div>
+      <div class="d"><b>Ignition on</b><span class="tag status">Status</span><br>Engine started — marks a trip start.</div>
+      <div class="d"><b>Ignition off</b><span class="tag status">Status</span><br>Engine stopped — marks a trip end.</div>
+      <div class="d"><b>Power off alarm</b><span class="tag system">System</span><br>Device powered off / main power lost.</div>
+      <div class="d"><b>MIL alarm</b><span class="tag system">System</span><br>Malfunction Indicator Lamp (check engine) on.</div>
+      <div class="d"><b>Exhaust emission</b><span class="tag system">System</span><br>Emission-related event, typically with MIL/DTC.</div>
+      <div class="d"><b>OBD communication error</b><span class="tag system">System</span><br>Lost link to the vehicle's OBD bus.</div>
+    </div>
+
+    <div class="roi"><span class="roi-k">ROI</span><p>Engine-level events turn driver coaching and theft response from guesswork into evidence. Harsh-driving flags feed <b>Drive Score</b>; tamper, towing, and illegal-ignition alerts turn a stolen asset into a recoverable one.</p></div>
+
+    <div class="callout"><span class="co-k">Related</span>Engine fault codes live on the <b>DTC</b> tab and AI-camera events on the <b>AI</b> tab — both covered in the Reports and Camera walkthroughs. Turning alert types on/off and setting thresholds is covered in Administration.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img src="accugps-logo.png" alt="AccuGPS" />
+    <span>GPS Suite Walkthrough</span>
+    <span class="fr">info@accugps.com · (888) 519-9128 · accugps.com</span>
+  </div>
+</footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{const v=e.target.querySelector('video');if(!v)return;if(e.isIntersecting){v.play().catch(()=>{})}else{v.pause()}})},{threshold:.4});
+  document.querySelectorAll('[data-vid]').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
